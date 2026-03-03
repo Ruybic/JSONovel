@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web VN Engine Player</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-menu">
+        <h1>My VN Engine</h1>
+        <p>Upload a JSON "Cartridge" to play.</p>
+        <input type="file" id="game-upload" accept=".json">
+    </div>
+
+    <div id="game-stage" class="hidden">
+        <div id="background-layer"></div>
+        
+        <img id="character-sprite" src="" alt="Character">
+        
+        <div id="ui-layer">
+            <div id="speaker-name">Name</div>
+            <div id="dialogue-text">Dialogue goes here...</div>
+            <div id="choices-container"></div>
+        </div>
+    </div>
+
+    <audio id="bgm-player" loop></audio>
+    
+    <script src="engine.js"></script>
+</body>
+</html>
