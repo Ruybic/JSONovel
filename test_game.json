@@ -1,0 +1,33 @@
+{
+  "title": "My First OC Game",
+  "nodes": [
+    {
+      "id": "start",
+      "background": "https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80",
+      "character": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/512px-SNice.svg.png",
+      "animation": "fade-in-left",
+      "speaker": "Mysterious OC",
+      "text": "Whoa! I just faded in from the left. Are you ready to test this engine?",
+      "choices": [
+        { "text": "Hell yeah.", "target": "scene_2" },
+        { "text": "Actually, I'm scared.", "target": "scene_3" }
+      ]
+    },
+    {
+      "id": "scene_2",
+      "background": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80",
+      "character": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/SNice.svg/512px-SNice.svg.png",
+      "animation": "fade-in-up",
+      "speaker": "Mysterious OC",
+      "text": "Awesome. The background just changed, and I faded up from the bottom.",
+      "next": "end"
+    },
+    {
+      "id": "scene_3",
+      "background": "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80",
+      "speaker": "System",
+      "text": "The OC ran away. The screen is empty.",
+      "next": "end"
+    }
+  ]
+}
