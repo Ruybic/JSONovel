@@ -1,115 +1,55 @@
 body {
-    margin: 0;
-    background-color: #111;
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
+    margin: 0; background-color: #111; color: white; font-family: Arial, sans-serif;
+    display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden;
 }
 
-#main-menu {
-    text-align: center;
-    background: #222;
-    padding: 40px;
-    border-radius: 10px;
-    border: 2px solid #555;
-}
+.hidden { display: none !important; }
 
-.hidden {
-    display: none !important;
-}
+/* --- Main Menu --- */
+#main-menu { text-align: center; background: #222; padding: 40px; border-radius: 10px; border: 2px solid #555; }
+.menu-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
+.menu-btn { background: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; }
+.menu-btn:hover { background: #0056b3; }
+.upload-btn { background: #28a745; display: block; }
+.upload-btn:hover { background: #218838; }
 
-/* 16:9 Horizontal Stage */
-#game-stage {
-    position: relative;
-    width: 100vw;
-    max-width: 1280px; 
-    aspect-ratio: 16 / 9;
-    background-color: #000;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(0,0,0,0.8);
-}
+/* --- Game Stage (Player) --- */
+#game-stage { position: relative; width: 100vw; max-width: 1280px; aspect-ratio: 16 / 9; background-color: #000; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+#background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; transition: background-image 0.5s ease; }
+#character-sprite { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 85%; transition: all 0.5s ease-out; opacity: 0; }
 
-#background-layer {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-size: cover;
-    background-position: center;
-    transition: background-image 0.5s ease;
-}
-
-#character-sprite {
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 85%; /* Keeps them proportional to the screen */
-    transition: all 0.5s ease-out; /* The magic that makes animations smooth */
-    opacity: 0;
-}
-
-/* Animation Starting Points */
+/* Animations */
 .fade-in-left { transform: translate(-150%, 0); opacity: 0; }
 .fade-in-right { transform: translate(50%, 0); opacity: 0; }
 .fade-in-up { transform: translate(-50%, 50%); opacity: 0; }
+.sprite-active { opacity: 1 !important; transform: translate(-50%, 0) !important; }
 
-/* The Active State (Where they end up) */
-.sprite-active { 
-    opacity: 1 !important; 
-    transform: translate(-50%, 0) !important; 
-}
-
-/* Text and UI */
-#ui-layer {
-    position: absolute;
-    bottom: 20px;
-    left: 5%;
-    width: 90%;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#speaker-name {
-    background: rgba(0, 0, 0, 0.85);
-    padding: 5px 15px;
-    border-radius: 5px;
-    width: fit-content;
-    font-weight: bold;
-    border: 1px solid #777;
-}
-
-#dialogue-text {
-    background: rgba(0, 0, 0, 0.85);
-    padding: 20px;
-    border-radius: 5px;
-    font-size: 1.2rem;
-    min-height: 60px;
-    border: 1px solid #777;
-}
-
-#choices-container {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.choice-btn {
-    background: rgba(50, 50, 150, 0.9);
-    color: white;
-    border: 1px solid #aaa;
-    padding: 10px 20px;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    width: 80%;
-    transition: background 0.2s;
-}
-
+/* UI Layer */
+#ui-layer { position: absolute; bottom: 20px; left: 5%; width: 90%; display: flex; flex-direction: column; gap: 10px; }
+#speaker-name { background: rgba(0, 0, 0, 0.85); padding: 5px 15px; border-radius: 5px; width: fit-content; font-weight: bold; border: 1px solid #777; }
+#dialogue-text { background: rgba(0, 0, 0, 0.85); padding: 20px; border-radius: 5px; font-size: 1.2rem; min-height: 60px; border: 1px solid #777; }
+#choices-container { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 10px; }
+.choice-btn { background: rgba(50, 50, 150, 0.9); color: white; border: 1px solid #aaa; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-size: 1.1rem; width: 80%; }
 .choice-btn:hover { background: rgba(80, 80, 200, 1); }
+#exit-game-btn { position: absolute; top: 10px; right: 10px; background: rgba(220,53,69,0.8); color: white; border: none; padding: 10px; cursor: pointer; border-radius: 5px; z-index: 10; }
 
+/* --- Node Editor --- */
+#node-editor { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a1a1a; display: flex; z-index: 100; }
+#editor-sidebar { width: 320px; background: #222; padding: 20px; display: flex; flex-direction: column; gap: 8px; border-right: 2px solid #444; overflow-y: auto; box-sizing: border-box;}
+#editor-sidebar input, #editor-sidebar textarea, #editor-sidebar select { background: #333; color: white; border: 1px solid #555; padding: 8px; border-radius: 4px; font-family: inherit; margin-bottom: 5px;}
+#editor-sidebar button { padding: 10px; color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold; margin-top: 5px;}
+
+/* Editor Buttons */
+.save-btn { background: #007bff; }
+.add-btn { background: #17a2b8; }
+.test-btn { background: #fd7e14; }
+.export-btn { background: #28a745; }
+.exit-btn { background: #dc3545; }
+
+/* Canvas Area */
+
+#canvas-area { flex-grow: 1; overflow: auto; padding: 50px; background-image: radial-gradient(#444 1px, transparent 1px); background-size: 30px 30px; position: relative; }
+#node-container { display: flex; flex-wrap: wrap; gap: 20px; }
+.node-box { width: 160px; min-height: 80px; background: #333; border: 2px solid #888; padding: 15px; cursor: pointer; border-radius: 8px; box-shadow: 4px 4px 10px rgba(0,0,0,0.5); word-wrap: break-word; transition: border 0.2s; }
+.node-box:hover { border-color: #007bff; background: #3a3a3a; }
+.node-box strong { color: #007bff; font-size: 1.1rem; display: block; margin-bottom: 5px; border-bottom: 1px solid #555; padding-bottom: 5px; }
