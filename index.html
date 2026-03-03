@@ -3,28 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My VN Engine</title>
+    <title>Project Harmony Engine</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="main-menu">
-    <div class="menu-left">
-        <h1 class="game-title">PROJECT: HARMONY</h1>
-        <div class="menu-buttons">
-            <button class="menu-btn" onclick="createNewGame()"><span>NEW ARCHIVE</span></button>
-            <label for="game-upload" class="menu-btn upload-btn">
-                <span>LOAD CARTRIDGE</span>
-            </label>
-            <input type="file" id="game-upload" accept=".json" style="display:none">
-            <button class="menu-btn settings-btn"><span>SYSTEM SETTINGS</span></button>
-        </div>
-        <div class="menu-footer">VERSION 1.0.4 // STABLE_BUILD</div>
-    </div>
 
-    <div class="menu-right">
-        <img src="https://files.catbox.moe/l1muwb.png" alt="Waifu" class="menu-waifu">
+    <div id="main-menu">
+        <div class="menu-left">
+            <h1 class="game-title">PROJECT: HARMONY</h1>
+            <div class="menu-buttons">
+                <button class="menu-btn" onclick="createNewGame()"><span>NEW ARCHIVE</span></button>
+                <label for="game-upload" class="menu-btn upload-btn">
+                    <span>LOAD CARTRIDGE</span>
+                </label>
+                <input type="file" id="game-upload" accept=".json" style="display:none">
+                <button class="menu-btn settings-btn"><span>SYSTEM SETTINGS</span></button>
+            </div>
+            <div class="menu-footer">VERSION 1.0.4 // STABLE_BUILD</div>
+        </div>
+
+        <div class="menu-right">
+            <img src="https://files.catbox.moe/l1muwb.png" alt="Waifu" class="menu-waifu">
+        </div>
     </div>
-</div>
 
     <div id="game-stage" class="hidden">
         <div id="background-layer"></div>
@@ -40,8 +41,46 @@
     </div>
 
     <div id="node-editor" class="hidden">
-        <div id="editor-sidebar">
+        <div id="editor-sidebar" data-editing-id="">
             <h3>Node Config</h3>
             <label>Node ID:</label>
-            <input type="
-                
+            <input type="text" id="edit-id" placeholder="e.g. start">
+            
+            <label>Speaker Name:</label>
+            <input type="text" id="edit-speaker">
+            
+            <label>Dialogue Text:</label>
+            <textarea id="edit-text" rows="4"></textarea>
+            
+            <label>Background (URL):</label>
+            <input type="text" id="edit-bg">
+            
+            <label>Character (URL):</label>
+            <input type="text" id="edit-char">
+            
+            <label>Animation:</label>
+            <select id="edit-anim">
+                <option value="fade-in-left">Fade Left</option>
+                <option value="fade-in-right">Fade Right</option>
+                <option value="fade-in-up">Fade Up</option>
+            </select>
+
+            <hr style="border: 0.5px solid #444; width: 100%; margin: 15px 0;">
+
+            <button onclick="saveNodeEdits()" style="background: #007bff; color: white;">Update Node</button>
+            <button onclick="addNode()" style="background: #17a2b8; color: white;">Add New Node</button>
+            <button onclick="testGameFromEditor()" style="background: #fd7e14; color: white;">Test Scene</button>
+            <button onclick="exportGame()" style="background: #28a745; color: white;">Export JSON</button>
+            <button onclick="location.reload()" style="background: #dc3545; color: white;">Quit Editor</button>
+        </div>
+
+        <div id="canvas-area">
+            <div id="node-container"></div>
+        </div>
+    </div>
+
+    <audio id="bgm-player" loop></audio>
+
+    <script src="engine.js"></script>
+</body>
+</html>
