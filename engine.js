@@ -101,17 +101,35 @@ function jumpToNode(targetId) {
 // 2. NODE EDITOR LOGIC
 // ==========================================
 function createNewGame() {
+    console.log("Button clicked!"); // This tells us the code is alive
+
     gameData = {
         title: "New Project",
         nodes: [{
-            id: "start", speaker: "System", text: "Welcome to your new game. Edit me!",
-            background: "", character: "", animation: "fade-in-up", next: null, choices: []
+            id: "start", 
+            speaker: "System", 
+            text: "Welcome to your new game. Click this box to edit!",
+            background: "", 
+            character: "", 
+            animation: "fade-in-up", 
+            next: null, 
+            choices: []
         }]
     };
-    mainMenu.classList.add('hidden');
-    nodeEditor.classList.remove('hidden');
-    refreshNodeMap();
+
+    // We fetch the elements directly to be 100% sure they exist
+    const menu = document.getElementById('main-menu');
+    const editor = document.getElementById('node-editor');
+
+    if (menu && editor) {
+        menu.classList.add('hidden');
+        editor.classList.remove('hidden');
+        refreshNodeMap();
+    } else {
+        alert("Error: Engine couldn't find the menu or editor sections!");
+    }
 }
+
 
 function refreshNodeMap() {
     const container = document.getElementById('node-container');
