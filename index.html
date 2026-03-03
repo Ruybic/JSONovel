@@ -8,14 +8,23 @@
 </head>
 <body>
     <div id="main-menu">
-        <h1>My VN Engine</h1>
-        <p>Build your game or load a JSON Cartridge.</p>
+    <div class="menu-left">
+        <h1 class="game-title">PROJECT: HARMONY</h1>
         <div class="menu-buttons">
-            <button class="menu-btn" onclick="createNewGame()">Create New Game</button>
-            <label for="game-upload" class="menu-btn upload-btn">Load JSON Cartridge</label>
+            <button class="menu-btn" onclick="createNewGame()"><span>NEW ARCHIVE</span></button>
+            <label for="game-upload" class="menu-btn upload-btn">
+                <span>LOAD CARTRIDGE</span>
+            </label>
             <input type="file" id="game-upload" accept=".json" style="display:none">
+            <button class="menu-btn settings-btn"><span>SYSTEM SETTINGS</span></button>
         </div>
+        <div class="menu-footer">VERSION 1.0.4 // STABLE_BUILD</div>
     </div>
+
+    <div class="menu-right">
+        <img src="https://files.catbox.moe/l1muwb.png" alt="Waifu" class="menu-waifu">
+    </div>
+</div>
 
     <div id="game-stage" class="hidden">
         <div id="background-layer"></div>
