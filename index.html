@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web VN Engine Player</title>
+    <title>My VN Engine</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="main-menu">
         <h1>My VN Engine</h1>
-        <p>Upload a JSON "Cartridge" to play.</p>
-        <input type="file" id="game-upload" accept=".json">
+        <p>Build your game or load a JSON Cartridge.</p>
+        <div class="menu-buttons">
+            <button class="menu-btn" onclick="createNewGame()">Create New Game</button>
+            <label for="game-upload" class="menu-btn upload-btn">Load JSON Cartridge</label>
+            <input type="file" id="game-upload" accept=".json" style="display:none">
+        </div>
     </div>
 
     <div id="game-stage" class="hidden">
         <div id="background-layer"></div>
-        
         <img id="character-sprite" src="" alt="Character">
         
         <div id="ui-layer">
@@ -23,10 +26,13 @@
             <div id="dialogue-text">Dialogue goes here...</div>
             <div id="choices-container"></div>
         </div>
+        
+        <button id="exit-game-btn" onclick="location.reload()">Exit Game</button>
     </div>
 
-    <audio id="bgm-player" loop></audio>
-    
-    <script src="engine.js"></script>
-</body>
-</html>
+    <div id="node-editor" class="hidden">
+        <div id="editor-sidebar">
+            <h3>Node Config</h3>
+            <label>Node ID:</label>
+            <input type="
+                
