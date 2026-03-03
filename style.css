@@ -5,13 +5,115 @@ body {
 
 .hidden { display: none !important; }
 
-/* --- Main Menu --- */
-#main-menu { text-align: center; background: #222; padding: 40px; border-radius: 10px; border: 2px solid #555; }
-.menu-buttons { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
-.menu-btn { background: #007bff; color: white; border: none; padding: 12px 24px; font-size: 1.2rem; cursor: pointer; border-radius: 5px; }
-.menu-btn:hover { background: #0056b3; }
-.upload-btn { background: #28a745; display: block; }
-.upload-btn:hover { background: #218838; }
+/* --- Main Menu Redesign (The Full Replacement) --- */
+#main-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 30% 50%, #1a1c2c 0%, #0d0e14 100%);
+    display: flex;
+    overflow: hidden;
+}
+
+/* Left Side - 45% of screen */
+.menu-left {
+    width: 45%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-left: 80px;
+    z-index: 2;
+    background: linear-gradient(to right, rgba(0,0,0,0.8) 0%, transparent 100%);
+}
+
+.game-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 40px;
+    color: #fff;
+    text-shadow: 0 0 15px rgba(0, 123, 255, 0.6);
+    font-style: italic;
+    text-transform: uppercase;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-btn {
+    all: unset; /* Resets default button behavior */
+    width: 280px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 4px solid #007bff;
+    color: #ccc;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.menu-btn:hover {
+    background: #007bff;
+    color: #fff;
+    transform: translateX(15px);
+    border-left: 4px solid #fff;
+    box-shadow: -10px 0 20px rgba(0, 123, 255, 0.4);
+}
+
+.upload-btn {
+    border-left-color: #28a745;
+}
+
+.upload-btn:hover {
+    background: #28a745;
+    box-shadow: -10px 0 20px rgba(40, 167, 69, 0.4);
+}
+
+.menu-footer {
+    margin-top: 50px;
+    font-size: 0.75rem;
+    color: #555;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+/* Right Side - Waifu Position */
+.menu-right {
+    position: absolute;
+    right: 0;
+    bottom: -50px; /* Slight offset for better framing */
+    width: 65%;
+    height: 110%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.menu-waifu {
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(-15px 0 30px rgba(0,0,0,0.8));
+    animation: floatingWaifu 5s ease-in-out infinite;
+}
+
+@keyframes floatingWaifu {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-15px) rotate(0.5deg); }
+}
+
 
 /* --- Game Stage (Player) --- */
 #game-stage { position: relative; width: 100vw; max-width: 1280px; aspect-ratio: 16 / 9; background-color: #000; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
