@@ -1,0 +1,115 @@
+body {
+    margin: 0;
+    background-color: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#main-menu {
+    text-align: center;
+    background: #222;
+    padding: 40px;
+    border-radius: 10px;
+    border: 2px solid #555;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* 16:9 Horizontal Stage */
+#game-stage {
+    position: relative;
+    width: 100vw;
+    max-width: 1280px; 
+    aspect-ratio: 16 / 9;
+    background-color: #000;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+#background-layer {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-size: cover;
+    background-position: center;
+    transition: background-image 0.5s ease;
+}
+
+#character-sprite {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 85%; /* Keeps them proportional to the screen */
+    transition: all 0.5s ease-out; /* The magic that makes animations smooth */
+    opacity: 0;
+}
+
+/* Animation Starting Points */
+.fade-in-left { transform: translate(-150%, 0); opacity: 0; }
+.fade-in-right { transform: translate(50%, 0); opacity: 0; }
+.fade-in-up { transform: translate(-50%, 50%); opacity: 0; }
+
+/* The Active State (Where they end up) */
+.sprite-active { 
+    opacity: 1 !important; 
+    transform: translate(-50%, 0) !important; 
+}
+
+/* Text and UI */
+#ui-layer {
+    position: absolute;
+    bottom: 20px;
+    left: 5%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#speaker-name {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 5px 15px;
+    border-radius: 5px;
+    width: fit-content;
+    font-weight: bold;
+    border: 1px solid #777;
+}
+
+#dialogue-text {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    min-height: 60px;
+    border: 1px solid #777;
+}
+
+#choices-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.choice-btn {
+    background: rgba(50, 50, 150, 0.9);
+    color: white;
+    border: 1px solid #aaa;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    width: 80%;
+    transition: background 0.2s;
+}
+
+.choice-btn:hover { background: rgba(80, 80, 200, 1); }
+
