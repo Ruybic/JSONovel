@@ -1,201 +1,253 @@
-let gameData = { title: "New Game", nodes: [] };
-let currentNode = null;
-
-// Grab DOM Elements
-const mainMenu = document.getElementById('main-menu');
-const gameStage = document.getElementById('game-stage');
-const nodeEditor = document.getElementById('node-editor');
-const fileUpload = document.getElementById('game-upload');
-
-const bgLayer = document.getElementById('background-layer');
-const charSprite = document.getElementById('character-sprite');
-const speakerName = document.getElementById('speaker-name');
-const dialogueText = document.getElementById('dialogue-text');
-const choicesContainer = document.getElementById('choices-container');
-const bgmPlayer = document.getElementById('bgm-player');
+let gameData = { nodes: [] };
+let activeNodeId = null;
 
 // ==========================================
-// 1. UPLOAD & PLAY LOGIC
+// 1. INIT & AUTO-SAVE LOGIC
 // ==========================================
-fileUpload.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        try {
-            gameData = JSON.parse(e.target.result);
-            startGame();
-        } catch (error) {
-            alert("Oops! That JSON file is invalid.");
-        }
-    };
-    reader.readAsText(file);
-});
+function initEditor(mode) {
+    if (mode === 'load' && localStorage.getItem('vn_project')) {
+        gameData = JSON.parse(localStorage.getItem('vn_project'));
+    } else if (mode === 'new') {
+        gameData = {
+            nodes: [{
+                id: "start", speaker: "System", text: "New node created. Start typing!",
+                bgUrl: "", bgScale: 100, bgX: 50, bgY: 50,
+                charUrl: "", charPos: "pos-center", charAnim: "fade-in-up", charGlow: "#ffffff",
+                choices: []
+            }]
+        };
+        saveToLocal();
+    } else {
+        alert("No save found! Starting new archive.");
+        initEditor('new');
+        return;
+    }
 
-function startGame() {
-    mainMenu.classList.add('hidden');
-    nodeEditor.classList.add('hidden');
-    gameStage.classList.remove('hidden');
-    
-    // Find the 'start' node or default to the first one in the array
-    const startNode = gameData.nodes.find(n => n.id === "start") || gameData.nodes[0];
-    if(startNode) renderNode(startNode);
-    else alert("No nodes found in this game data!");
+    document.getElementById('main-menu').classList.add('hidden');
+    document.getElementById('node-editor').classList.remove('hidden');
+    refreshCanvas();
+    loadIntoSidebar(gameData.nodes[0].id);
 }
 
-function renderNode(node) {
-    currentNode = node;
+function saveToLocal() {
+    localStorage.setItem('vn_project', JSON.stringify(gameData));
+    refreshCanvas(); // Update visual boxes
+}
 
-    if (node.background) bgLayer.style.backgroundImage = `url('${node.background}')`;
+function wipeProject() {
+    if(confirm("Are you sure? This deletes your browser save entirely.")) {
+        localStorage.removeItem('vn_project');
+        location.reload();
+    }
+}
+
+// ==========================================
+// 2. EDITOR SYNC (The "Auto-Save" Engine)
+// ==========================================
+function loadIntoSidebar(id) {
+    activeNodeId = id;
+    const node = gameData.nodes.find(n => n.id === id);
+    if (!node) return;
+
+    document.getElementById('edit-id').value = node.id;
+    document.getElementById('edit-speaker').value = node.speaker || "";
+    document.getElementById('edit-text').value = node.text || "";
     
-    if (node.audio && bgmPlayer.src !== node.audio) {
-        bgmPlayer.src = node.audio;
-        bgmPlayer.play().catch(e => console.log("Auto-play blocked by browser"));
+    document.getElementById('edit-bgUrl').value = node.bgUrl || "";
+    document.getElementById('edit-bgScale').value = node.bgScale || 100;
+    document.getElementById('edit-bgX').value = node.bgX || 50;
+    document.getElementById('edit-bgY').value = node.bgY || 50;
+    
+    document.getElementById('edit-charUrl').value = node.charUrl || "";
+    document.getElementById('edit-charPos').value = node.charPos || "pos-center";
+    document.getElementById('edit-charAnim').value = node.charAnim || "fade-in-up";
+    document.getElementById('edit-charGlow').value = node.charGlow || "#ffffff";
+
+    renderChoicesEditor(node.choices || []);
+    
+    // Highlight active box
+    document.querySelectorAll('.node-box').forEach(b => b.classList.remove('active'));
+    document.getElementById(`box-${id}`).classList.add('active');
+}
+
+// Fired every time you type a letter in the sidebar
+function autoSave() {
+    if (!activeNodeId) return;
+    const node = gameData.nodes.find(n => n.id === activeNodeId);
+    
+    const newId = document.getElementById('edit-id').value;
+    if (newId !== activeNodeId && !gameData.nodes.find(n => n.id === newId)) {
+        node.id = newId;
+        activeNodeId = newId;
     }
 
-    if (node.character) {
-        charSprite.src = node.character;
-        charSprite.className = ''; 
-        if (node.animation) charSprite.classList.add(node.animation);
-        void charSprite.offsetWidth; // Force CSS reflow to restart animation
-        charSprite.classList.add('sprite-active');
-    } else {
-        charSprite.className = ''; 
-        charSprite.src = '';
-    }
-
-    speakerName.innerText = node.speaker || "";
-    speakerName.style.display = node.speaker ? "block" : "none";
-    dialogueText.innerText = node.text || "";
-
-    choicesContainer.innerHTML = '';
+    node.speaker = document.getElementById('edit-speaker').value;
+    node.text = document.getElementById('edit-text').value;
     
-    if (node.choices && node.choices.length > 0) {
-        node.choices.forEach(choice => {
-            const btn = document.createElement('button');
-            btn.className = 'choice-btn';
-            btn.innerText = choice.text;
-            btn.onclick = () => jumpToNode(choice.target);
-            choicesContainer.appendChild(btn);
+    node.bgUrl = document.getElementById('edit-bgUrl').value;
+    node.bgScale = document.getElementById('edit-bgScale').value;
+    node.bgX = document.getElementById('edit-bgX').value;
+    node.bgY = document.getElementById('edit-bgY').value;
+    
+    node.charUrl = document.getElementById('edit-charUrl').value;
+    node.charPos = document.getElementById('edit-charPos').value;
+    node.charAnim = document.getElementById('edit-charAnim').value;
+    node.charGlow = document.getElementById('edit-charGlow').value;
+
+    document.getElementById('bg-scale-val').innerText = node.bgScale;
+
+    // Gather choices
+    const choiceRows = document.querySelectorAll('.choice-edit-row');
+    node.choices = [];
+    choiceRows.forEach(row => {
+        node.choices.push({
+            text: row.children[0].value,
+            target: row.children[1].value
         });
-    } else if (node.next) {
-        const btn = document.createElement('button');
-        btn.className = 'choice-btn';
-        btn.innerText = "Continue...";
-        btn.onclick = () => jumpToNode(node.next);
-        choicesContainer.appendChild(btn);
-    }
-}
+    });
 
-function jumpToNode(targetId) {
-    const nextNode = gameData.nodes.find(n => n.id === targetId);
-    if (nextNode) {
-        renderNode(nextNode);
-    } else {
-        alert("End of the game path!");
-        location.reload(); 
-    }
+    saveToLocal();
 }
 
 // ==========================================
-// 2. NODE EDITOR LOGIC
+// 3. CANVAS (Sub-rectangles for choices)
 // ==========================================
-function createNewGame() {
-    console.log("Button clicked!"); // This tells us the code is alive
-
-    gameData = {
-        title: "New Project",
-        nodes: [{
-            id: "start", 
-            speaker: "System", 
-            text: "Welcome to your new game. Click this box to edit!",
-            background: "", 
-            character: "", 
-            animation: "fade-in-up", 
-            next: null, 
-            choices: []
-        }]
-    };
-
-    // We fetch the elements directly to be 100% sure they exist
-    const menu = document.getElementById('main-menu');
-    const editor = document.getElementById('node-editor');
-
-    if (menu && editor) {
-        menu.classList.add('hidden');
-        editor.classList.remove('hidden');
-        refreshNodeMap();
-    } else {
-        alert("Error: Engine couldn't find the menu or editor sections!");
-    }
-}
-
-
-function refreshNodeMap() {
+function refreshCanvas() {
     const container = document.getElementById('node-container');
     container.innerHTML = '';
 
     gameData.nodes.forEach(node => {
         const box = document.createElement('div');
-        box.className = 'node-box';
-        // Display a preview of the node
-        box.innerHTML = `<strong>${node.id}</strong><small>${node.text ? node.text.substring(0, 30) : ''}...</small>`;
-        box.onclick = () => loadNodeIntoEditor(node.id);
+        box.className = `node-box ${node.id === activeNodeId ? 'active' : ''}`;
+        box.id = `box-${node.id}`;
+        box.onclick = () => loadIntoSidebar(node.id);
+        
+        let choicesHTML = (node.choices || []).map(c => `<div class="sub-rect">↳ ${c.text} ➡ [${c.target}]</div>`).join('');
+
+        box.innerHTML = `
+            <div class="node-header">${node.id}</div>
+            <div class="node-body">"${node.text ? node.text.substring(0, 40) : ''}..."</div>
+            ${choicesHTML ? `<div class="node-choices">${choicesHTML}</div>` : ''}
+        `;
         container.appendChild(box);
     });
 }
 
-function loadNodeIntoEditor(id) {
-    const node = gameData.nodes.find(n => n.id === id);
-    if(!node) return;
-    
-    document.getElementById('edit-id').value = node.id || "";
-    document.getElementById('edit-speaker').value = node.speaker || "";
-    document.getElementById('edit-text').value = node.text || "";
-    document.getElementById('edit-bg').value = node.background || "";
-    document.getElementById('edit-char').value = node.character || "";
-    document.getElementById('edit-anim').value = node.animation || "fade-in-left";
-    
-    // Store the ID we are currently editing
-    document.getElementById('editor-sidebar').dataset.editingId = id;
-}
-
-function saveNodeEdits() {
-    const originalId = document.getElementById('editor-sidebar').dataset.editingId;
-    const node = gameData.nodes.find(n => n.id === originalId);
-    if(!node) { alert("Click on a box first to edit it!"); return; }
-
-    // Update data
-    node.id = document.getElementById('edit-id').value;
-    node.speaker = document.getElementById('edit-speaker').value;
-    node.text = document.getElementById('edit-text').value;
-    node.background = document.getElementById('edit-bg').value;
-    node.character = document.getElementById('edit-char').value;
-    node.animation = document.getElementById('edit-anim').value;
-
-    refreshNodeMap();
-}
-
 function addNode() {
     const newId = "scene_" + Math.floor(Math.random() * 1000);
-    gameData.nodes.push({
-        id: newId, speaker: "New Character", text: "New dialogue...",
-        background: "", character: "", animation: "fade-in-left", next: null, choices: []
+    gameData.nodes.push({ id: newId, text: "New node...", choices: [] });
+    saveToLocal();
+    loadIntoSidebar(newId);
+}
+
+function addChoice() {
+    const node = gameData.nodes.find(n => n.id === activeNodeId);
+    if(!node.choices) node.choices = [];
+    node.choices.push({ text: "New Choice", target: "target_id" });
+    renderChoicesEditor(node.choices);
+    autoSave();
+}
+
+function renderChoicesEditor(choices) {
+    const list = document.getElementById('choices-list');
+    list.innerHTML = '';
+    choices.forEach((c, index) => {
+        const row = document.createElement('div');
+        row.className = 'choice-edit-row';
+        row.innerHTML = `
+            <input type="text" value="${c.text}" placeholder="Choice Text" oninput="autoSave()">
+            <input type="text" value="${c.target}" placeholder="Target Node ID" oninput="autoSave()">
+            <button class="del-btn" onclick="removeChoice(${index})">X</button>
+        `;
+        list.appendChild(row);
     });
-    refreshNodeMap();
-    loadNodeIntoEditor(newId); // Open it immediately
 }
 
+function removeChoice(index) {
+    const node = gameData.nodes.find(n => n.id === activeNodeId);
+    node.choices.splice(index, 1);
+    renderChoicesEditor(node.choices);
+    autoSave();
+}
+
+// ==========================================
+// 4. GAME PLAYER LOGIC
+// ==========================================
 function testGameFromEditor() {
-    startGame();
+    document.getElementById('node-editor').classList.add('hidden');
+    document.getElementById('game-stage').classList.remove('hidden');
+    playNode(activeNodeId);
 }
 
-function exportGame() {
-    const dataStr = JSON.stringify(gameData, null, 2);
-    const blob = new Blob([dataStr], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "my_game_cartridge.json";
-    link.click();
+function exitGame() {
+    document.getElementById('game-stage').classList.add('hidden');
+    document.getElementById('node-editor').classList.remove('hidden');
 }
+
+function playNode(id) {
+    const node = gameData.nodes.find(n => n.id === id);
+    if(!node) { alert("End of path!"); exitGame(); return; }
+
+    // Setup Background (Scale and Position)
+    const bg = document.getElementById('background-layer');
+    if (node.bgUrl) {
+        bg.style.backgroundImage = `url('${node.bgUrl}')`;
+        bg.style.backgroundSize = `${node.bgScale || 100}%`;
+        bg.style.backgroundPosition = `${node.bgX || 50}% ${node.bgY || 50}%`;
+    }
+
+    // Setup Character & Glow
+    const charWrapper = document.getElementById('char-container');
+    const sprite = document.getElementById('character-sprite');
+    const glow = document.getElementById('char-glow');
+
+    if (node.charUrl) {
+        sprite.src = node.charUrl;
+        charWrapper.className = node.charPos || "pos-center";
+        glow.style.background = node.charGlow || "#ffffff";
+        
+        sprite.style.animation = 'none';
+        void sprite.offsetWidth; // Trigger reflow
+        sprite.className = node.charAnim || "fade-in-up";
+    } else {
+        sprite.src = "";
+        glow.style.background = "transparent";
+    }
+
+    // Setup Text
+    document.getElementById('speaker-name').innerText = node.speaker || "";
+    document.getElementById('dialogue-text').innerText = node.text || "";
+
+    // Setup Choices
+    const choicesBox = document.getElementById('choices-container');
+    choicesBox.innerHTML = '';
+    
+    if (node.choices && node.choices.length > 0) {
+        node.choices.forEach(c => {
+            const btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = c.text;
+            btn.onclick = () => playNode(c.target);
+            choicesBox.appendChild(btn);
+        });
+    } else {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerText = "Next...";
+        // If no choices, attempt to just find the next node in the array (fallback)
+        const currIndex = gameData.nodes.indexOf(node);
+        if(currIndex < gameData.nodes.length - 1) {
+            btn.onclick = () => playNode(gameData.nodes[currIndex + 1].id);
+            choicesBox.appendChild(btn);
+        }
+    }
+}
+
+// Download JSON Data
+function exportGame() {
+    const blob = new Blob([JSON.stringify(gameData, null, 2)], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "harmony_project.json";
+    link.click();
+        }
