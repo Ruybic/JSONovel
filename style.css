@@ -1,72 +1,405 @@
-body { margin: 0; background-color: #111; color: white; font-family: Arial, sans-serif; overflow: hidden; }
-.hidden { display: none !important; }
+/* ============================================================
+   1. GLOBAL & UTILS
+   ============================================================ */
+body { 
+    margin: 0; 
+    background-color: #111; 
+    color: white; 
+    font-family: 'Segoe UI', Arial, sans-serif; 
+    overflow: hidden; 
+}
 
-/* Main Menu (Kept your exact awesome layout) */
-#main-menu { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: radial-gradient(circle at 30% 50%, #1a1c2c 0%, #0d0e14 100%); display: flex; overflow: hidden; z-index: 1000; }
-.menu-left { width: 45%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding-left: 80px; z-index: 2; background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, transparent 100%); }
-.game-title { font-size: 3.5rem; font-weight: 900; color: #fff; text-shadow: 0 0 15px rgba(0, 123, 255, 0.6); font-style: italic; margin-bottom: 40px; }
-.menu-buttons { display: flex; flex-direction: column; gap: 15px; }
-.menu-btn { all: unset; width: 280px; height: 50px; background: rgba(255, 255, 255, 0.03); border-left: 4px solid #007bff; color: #ccc; font-weight: bold; cursor: pointer; display: flex; align-items: center; padding-left: 20px; clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%); transition: all 0.3s; }
-.menu-btn:hover { background: #007bff; color: #fff; transform: translateX(15px); border-left: 4px solid #fff; }
-.menu-footer { margin-top: 50px; font-size: 0.75rem; color: #555; }
-.menu-right { position: absolute; right: 0; bottom: -50px; width: 65%; height: 110%; display: flex; justify-content: flex-end; align-items: flex-end; pointer-events: none; }
-.menu-waifu { height: 100%; object-fit: contain; filter: drop-shadow(-15px 0 30px rgba(0,0,0,0.8)); animation: floatingWaifu 5s ease-in-out infinite; }
-@keyframes floatingWaifu { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+.hidden { 
+    display: none !important; 
+}
 
-/* Game Stage & Layers (The Fixes) */
-#game-stage { position: relative; width: 100vw; max-width: 1280px; margin: 0 auto; aspect-ratio: 16 / 9; background-color: #000; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-#background-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-repeat: no-repeat; z-index: 1; transition: all 0.5s; }
+/* ============================================================
+   2. MAIN MENU (Split Screen Style)
+   ============================================================ */
+#main-menu { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background: radial-gradient(circle at 30% 50%, #1a1c2c 0%, #0d0e14 100%); 
+    display: flex; 
+    overflow: hidden; 
+    z-index: 1000; 
+}
 
-/* Character & Glow Positioning */
-#char-container { position: absolute; bottom: 0; height: 85%; transition: all 0.5s ease; z-index: 3; display: flex; justify-content: center; }
+.menu-left { 
+    width: 45%; 
+    height: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    padding-left: 80px; 
+    z-index: 2; 
+    background: linear-gradient(to right, rgba(0,0,0,0.9) 0%, transparent 100%); 
+}
+
+.game-title { 
+    font-size: 3.5rem; 
+    font-weight: 900; 
+    color: #fff; 
+    text-shadow: 0 0 15px rgba(0, 123, 255, 0.6); 
+    font-style: italic; 
+    margin-bottom: 40px; 
+    text-transform: uppercase;
+}
+
+.menu-buttons { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 15px; 
+}
+
+.menu-btn { 
+    all: unset; 
+    width: 280px; 
+    height: 50px; 
+    background: rgba(255, 255, 255, 0.03); 
+    border-left: 4px solid #007bff; 
+    color: #ccc; 
+    font-weight: bold; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    padding-left: 20px; 
+    clip-path: polygon(0 0, 92% 0, 100% 100%, 0% 100%); 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+}
+
+.menu-btn:hover { 
+    background: #007bff; 
+    color: #fff; 
+    transform: translateX(15px); 
+    border-left: 4px solid #fff; 
+}
+
+.upload-btn { 
+    border-left-color: #28a745; 
+}
+
+.upload-btn:hover { 
+    background: #28a745; 
+}
+
+.menu-footer { 
+    margin-top: 50px; 
+    font-size: 0.75rem; 
+    color: #555; 
+    letter-spacing: 2px;
+}
+
+.menu-right { 
+    position: absolute; 
+    right: 0; 
+    bottom: -50px; 
+    width: 65%; 
+    height: 110%; 
+    display: flex; 
+    justify-content: flex-end; 
+    align-items: flex-end; 
+    pointer-events: none; 
+}
+
+.menu-waifu { 
+    height: 100%; 
+    object-fit: contain; 
+    filter: drop-shadow(-15px 0 30px rgba(0,0,0,0.8)); 
+    animation: floatingWaifu 5s ease-in-out infinite; 
+}
+
+@keyframes floatingWaifu { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-15px); } 
+}
+
+/* ============================================================
+   3. VISUAL NOODE EDITOR (The Spaghetti Board)
+   ============================================================ */
+#node-editor { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh; 
+    background: #1a1a1a; 
+    display: flex; 
+    z-index: 100; 
+}
+
+/* Sidebar */
+#editor-sidebar { 
+    width: 350px; 
+    background: #222; 
+    padding: 20px; 
+    overflow-y: auto; 
+    border-right: 2px solid #444; 
+    z-index: 10;
+}
+
+.editor-section { 
+    background: #2a2a2a; 
+    padding: 15px; 
+    border-radius: 8px; 
+    margin-bottom: 15px; 
+    border: 1px solid #444; 
+}
+
+.editor-section label { 
+    display: block; 
+    font-size: 0.85rem; 
+    color: #aaa; 
+    margin-bottom: 5px; 
+}
+
+.editor-section input, .editor-section textarea, .editor-section select { 
+    width: 100%; 
+    background: #111; 
+    color: white; 
+    border: 1px solid #555; 
+    padding: 8px; 
+    border-radius: 4px; 
+    box-sizing: border-box; 
+    margin-bottom: 10px; 
+    font-family: inherit; 
+}
+
+/* Canvas Area */
+#canvas-area { 
+    flex-grow: 1; 
+    overflow: auto; 
+    background-color: #1a1a1a; 
+    position: relative; 
+}
+
+#drag-plane { 
+    position: relative; 
+    width: 4000px; 
+    height: 4000px; 
+    background-image: radial-gradient(#333 1px, transparent 1px); 
+    background-size: 40px 40px; 
+}
+
+#connection-lines { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    pointer-events: none; 
+    z-index: 1; 
+}
+
+/* Node Boxes */
+#node-container { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    z-index: 2; 
+    pointer-events: none; 
+}
+
+.node-box { 
+    position: absolute; 
+    width: 220px; 
+    background: #333; 
+    border: 2px solid #666; 
+    border-radius: 8px; 
+    box-shadow: 4px 4px 10px rgba(0,0,0,0.5); 
+    display: flex; 
+    flex-direction: column; 
+    overflow: hidden; 
+    pointer-events: auto; 
+    transition: box-shadow 0.2s; 
+}
+
+.node-box.active { 
+    border-color: #007bff; 
+    box-shadow: 0 0 20px rgba(0,123,255,0.7); 
+    z-index: 100; 
+}
+
+.node-header { 
+    background: #222; 
+    padding: 10px; 
+    font-weight: bold; 
+    color: #fff; 
+    border-bottom: 1px solid #555; 
+    cursor: grab; 
+    user-select: none; 
+}
+
+.node-header:active { 
+    cursor: grabbing; 
+}
+
+.node-body { 
+    padding: 15px 10px; 
+    font-size: 0.85rem; 
+    color: #ccc; 
+    cursor: pointer; 
+}
+
+/* Node Links (Sub-Rects) */
+.node-choices { background: #1a1a1a; padding: 5px; border-top: 1px solid #444; }
+.sub-rect { 
+    background: #007bff; 
+    color: white; 
+    font-size: 0.7rem; 
+    padding: 4px 8px; 
+    margin: 2px 0; 
+    border-radius: 3px; 
+    display: flex; 
+    justify-content: space-between; 
+}
+.sub-next { 
+    background: #28a745; 
+    color: white; 
+    font-size: 0.7rem; 
+    padding: 4px; 
+    border-radius: 3px; 
+    text-align: center; 
+    margin: 2px; 
+}
+
+/* Tool Buttons */
+.tool-btn { 
+    width: 100%; 
+    padding: 10px; 
+    margin-bottom: 8px; 
+    border: none; 
+    border-radius: 4px; 
+    color: white; 
+    font-weight: bold; 
+    cursor: pointer; 
+}
+.add-btn { background: #17a2b8; }
+.test-btn { background: #fd7e14; }
+.export-btn { background: #28a745; }
+.danger-btn { background: #dc3545; }
+
+/* ============================================================
+   4. GAME STAGE (The Playable Experience)
+   ============================================================ */
+#game-stage { 
+    position: relative; 
+    width: 100vw; 
+    height: 100vh; 
+    background-color: #000; 
+    overflow: hidden; 
+}
+
+#background-layer { 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-repeat: no-repeat; 
+    background-position: center;
+    background-size: cover;
+    z-index: 1; 
+    transition: all 0.5s ease-in-out; 
+}
+
+/* Character Layer */
+#char-container { 
+    position: absolute; 
+    bottom: 0; 
+    height: 90%; 
+    transition: all 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
+    z-index: 3; 
+    display: flex; 
+    justify-content: center; 
+}
+
 .pos-left { left: 20%; transform: translateX(-50%); }
 .pos-center { left: 50%; transform: translateX(-50%); }
 .pos-right { left: 80%; transform: translateX(-50%); }
 
-#character-sprite { height: 100%; object-fit: contain; position: relative; z-index: 3; }
-#char-glow { position: absolute; bottom: 5%; width: 200px; height: 80%; border-radius: 50%; filter: blur(40px); opacity: 0.6; z-index: 2; transition: background 0.3s; }
+#character-sprite { 
+    height: 100%; 
+    object-fit: contain; 
+    position: relative; 
+    z-index: 3; 
+}
 
-/* UI Layer */
-#ui-layer { position: absolute; bottom: 20px; left: 5%; width: 90%; z-index: 4; display: flex; flex-direction: column; gap: 10px; }
-#speaker-name { background: rgba(0, 0, 0, 0.85); padding: 5px 15px; border-radius: 5px; width: fit-content; font-weight: bold; border: 1px solid #777; }
-#dialogue-text { background: rgba(0, 0, 0, 0.85); padding: 20px; border-radius: 5px; font-size: 1.2rem; min-height: 60px; border: 1px solid #777; }
-#choices-container { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-bottom: 10px; }
-.choice-btn { background: rgba(50, 50, 150, 0.9); color: white; border: 1px solid #aaa; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-size: 1.1rem; width: 80%; transition: background 0.2s; }
-.choice-btn:hover { background: rgba(80, 80, 200, 1); }
-#exit-game-btn { position: absolute; top: 10px; right: 10px; z-index: 10; padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; }
+#char-glow { 
+    position: absolute; 
+    bottom: 10%; 
+    width: 300px; 
+    height: 80%; 
+    border-radius: 50%; 
+    filter: blur(50px); 
+    opacity: 0.5; 
+    z-index: 2; 
+}
+
+/* UI Dialogue Layer */
+#ui-layer { 
+    position: absolute; 
+    bottom: 30px; 
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 80%; 
+    z-index: 10; 
+}
+
+#speaker-name { 
+    background: rgba(0, 0, 0, 0.9); 
+    padding: 8px 20px; 
+    border-radius: 5px 5px 0 0; 
+    width: fit-content; 
+    font-weight: bold; 
+    border: 1px solid #444;
+    border-bottom: none;
+    color: #007bff;
+}
+
+#dialogue-text { 
+    background: rgba(0, 0, 0, 0.9); 
+    padding: 25px; 
+    border-radius: 0 5px 5px 5px; 
+    font-size: 1.3rem; 
+    min-height: 80px; 
+    border: 1px solid #444; 
+    line-height: 1.5;
+}
+
+/* Choices in Player */
+#choices-container { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-bottom: 20px;
+}
+
+.choice-btn { 
+    background: rgba(20, 20, 20, 0.95); 
+    color: white; 
+    border: 1px solid #007bff; 
+    padding: 12px 30px; 
+    cursor: pointer; 
+    border-radius: 4px; 
+    font-size: 1.1rem; 
+    transition: 0.2s;
+}
+
+.choice-btn:hover { 
+    background: #007bff; 
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
 
 /* Animations */
-.fade-in-left { animation: slideRight 0.5s forwards; }
-.fade-in-right { animation: slideLeft 0.5s forwards; }
-.fade-in-up { animation: fadeUp 0.5s forwards; }
-@keyframes slideRight { from { transform: translateX(-50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-@keyframes slideLeft { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-@keyframes fadeUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-/* Editor Overhaul */
-#node-editor { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #1a1a1a; display: flex; z-index: 100; }
-#editor-sidebar { width: 350px; background: #222; padding: 20px; overflow-y: auto; border-right: 2px solid #444; }
-.editor-section { background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #444; }
-.editor-section label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 5px; }
-.editor-section input[type="text"], .editor-section textarea, .editor-section select { width: 100%; background: #111; color: white; border: 1px solid #555; padding: 8px; border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
-.slider-group { display: flex; flex-direction: column; gap: 5px; }
-.slider-group input { width: 100%; }
-
-/* Action Buttons */
-.tool-btn { width: 100%; padding: 10px; margin-bottom: 8px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; text-align: left; }
-.add-btn { background: #17a2b8; } .test-btn { background: #fd7e14; } .export-btn { background: #28a745; } .danger-btn { background: #dc3545; }
-
-/* Canvas & Nodes */
-#canvas-area { flex-grow: 1; overflow: auto; padding: 50px; background-image: radial-gradient(#444 1px, transparent 1px); background-size: 30px 30px; }
-#node-container { display: flex; flex-wrap: wrap; gap: 30px; }
-.node-box { width: 220px; background: #333; border: 2px solid #666; border-radius: 8px; cursor: pointer; box-shadow: 4px 4px 10px rgba(0,0,0,0.5); display: flex; flex-direction: column; overflow: hidden; }
-.node-box.active { border-color: #007bff; box-shadow: 0 0 15px rgba(0,123,255,0.5); }
-.node-header { background: #222; padding: 10px; font-weight: bold; color: #007bff; border-bottom: 1px solid #555; }
-.node-body { padding: 10px; font-size: 0.85rem; color: #ccc; flex-grow: 1; }
-.node-choices { background: #1a1a1a; padding: 5px; border-top: 1px solid #444; }
-.sub-rect { background: #007bff; color: white; font-size: 0.7rem; padding: 4px; margin: 2px 0; border-radius: 3px; text-align: center; }
-
-/* Choices Editor */
-.choice-edit-row { display: flex; gap: 5px; margin-bottom: 5px; }
-.choice-edit-row input { flex-grow: 1; background: #111; color: white; border: 1px solid #555; padding: 5px; }
-.del-btn { background: #dc3545; color: white; border: none; cursor: pointer; padding: 0 10px; }
+.fade-in-up { animation: fadeUp 0.6s forwards; }
+@keyframes fadeUp { 
+    from { transform: translateY(50px); opacity: 0; } 
+    to { transform: translateY(0); opacity: 1; } 
+  }
+  
