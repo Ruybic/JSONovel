@@ -16,7 +16,7 @@
                 <label for="game-upload" class="menu-btn upload-btn"><span>LOAD CARTRIDGE</span></label>
                 <input type="file" id="game-upload" accept=".json" style="display:none">
             </div>
-            <div class="menu-footer">AUTO-SAVE ENABLED // ENGINE V2</div>
+            <div class="menu-footer">NODE GRAPH ENABLED // ENGINE V3</div>
         </div>
         <div class="menu-right">
             <img src="https://files.catbox.moe/l1muwb.png" alt="Waifu" class="menu-waifu">
@@ -25,12 +25,10 @@
 
     <div id="game-stage" class="hidden">
         <div id="background-layer"></div>
-        
         <div id="char-container" class="pos-center">
             <div id="char-glow"></div>
             <img id="character-sprite" src="" alt="Character">
         </div>
-        
         <div id="ui-layer">
             <div id="speaker-name">Name</div>
             <div id="dialogue-text">Dialogue goes here...</div>
@@ -55,20 +53,18 @@
             </div>
 
             <div class="editor-section">
-                <label>Background (URL):</label>
-                <input type="text" id="edit-bgUrl" placeholder="Image URL" oninput="autoSave()">
+                <label>Background & Scale:</label>
+                <input type="text" id="edit-bgUrl" placeholder="BG Image URL" oninput="autoSave()">
                 <div class="slider-group">
-                    <label>Scale %: <span id="bg-scale-val">100</span></label>
-                    <input type="range" id="edit-bgScale" min="50" max="200" value="100" oninput="autoSave()">
-                    <label>X/Y Position:</label>
-                    <input type="range" id="edit-bgX" min="0" max="100" value="50" oninput="autoSave()">
-                    <input type="range" id="edit-bgY" min="0" max="100" value="50" oninput="autoSave()">
+                    <input type="range" id="edit-bgScale" min="50" max="200" value="100" title="Zoom" oninput="autoSave()">
+                    <input type="range" id="edit-bgX" min="0" max="100" value="50" title="X Position" oninput="autoSave()">
+                    <input type="range" id="edit-bgY" min="0" max="100" value="50" title="Y Position" oninput="autoSave()">
                 </div>
             </div>
 
             <div class="editor-section">
-                <label>Character (URL):</label>
-                <input type="text" id="edit-charUrl" placeholder="Image URL" oninput="autoSave()">
+                <label>Character & Position:</label>
+                <input type="text" id="edit-charUrl" placeholder="Char Image URL" oninput="autoSave()">
                 <select id="edit-charPos" onchange="autoSave()">
                     <option value="pos-left">Position: Left</option>
                     <option value="pos-center">Position: Center</option>
@@ -84,21 +80,27 @@
             </div>
 
             <div class="editor-section">
-                <label>Choices (Branching Paths):</label>
+                <label style="color: #28a745;">Linear Link (Main Story):</label>
+                <input type="text" id="edit-next" placeholder="Target Node ID (Leaves blank for choices)" oninput="autoSave()">
+                
+                <label style="color: #007bff; margin-top: 10px;">Branching (Decisions):</label>
                 <div id="choices-list"></div>
-                <button onclick="addChoice()" class="tool-btn">+ Add Choice</button>
+                <button onclick="addChoice()" class="tool-btn" style="background: #333;">+ Add Choice</button>
             </div>
 
             <div class="action-buttons">
-                <button onclick="addNode()" class="tool-btn add-btn" title="Creates a new blank box">➕ New Node</button>
-                <button onclick="testGameFromEditor()" class="tool-btn test-btn" title="Plays game starting from this node">▶️ Test Scene</button>
-                <button onclick="exportGame()" class="tool-btn export-btn" title="Downloads your game file">📦 Download JSON</button>
-                <button onclick="wipeProject()" class="tool-btn danger-btn" title="Deletes browser save">🗑️ Clear Save</button>
+                <button onclick="addNode()" class="tool-btn add-btn">➕ New Free Node</button>
+                <button onclick="testGameFromEditor()" class="tool-btn test-btn">▶️ Test Scene</button>
+                <button onclick="exportGame()" class="tool-btn export-btn">📦 Download JSON</button>
+                <button onclick="wipeProject()" class="tool-btn danger-btn">🗑️ Clear Save</button>
             </div>
         </div>
 
         <div id="canvas-area">
-            <div id="node-container"></div>
+            <div id="drag-plane">
+                <svg id="connection-lines"></svg>
+                <div id="node-container"></div>
+            </div>
         </div>
     </div>
 
